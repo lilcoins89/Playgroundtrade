@@ -65,6 +65,7 @@ import {
   toSafePublicKey,
 } from '../utils/solana';
 import { AirdropRecord } from '../types';
+import { recordTradeToSupabase, subscribeToMarketData, syncTokensToSupabase, supabase } from '../utils/supabase';
 
 interface TradingContextType {
   mode: AppMode;
@@ -152,6 +153,21 @@ export const TradingProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [isAirdropping, setIsAirdropping] = useState<boolean>(false);
   const [autoAirdropNotice, setAutoAirdropNotice] = useState<{ message: string; signature?: string; timestamp: number } | null>(null);
   const autoAirdropAttemptedRef = useRef<Record<string, number>>({});
+
+  useEffect(() => {
+    void syncTokensToSupabase(tokens);
+    if (!supabase) return;
+    let cancelled = false;
+    void supabase.from('tokens').select('id,symbol,name,mint_address,logo_url,description,decimals,base_price_sol,market_cap_sol').then(({ data, error }) => {
+      if (cancelled || error || !data?.length) return;
+      setTokens((current) => current.map((token) => {
+        const remote = data.find((item) => item.id === token.id);
+        return remote ? { ...token, name: remote.name, symbol: remote.symbol, mintAddress: remote.mint_address ?? token.mintAddress, iconUrl: remote.logo_url ?? token.iconUrl, description: remote.description ?? token.description, decimals: remote.decimals ?? token.decimals, basePriceSol: Number(remote.base_price_sol ?? token.basePriceSol), marketCapSol: Number(remote.market_cap_sol ?? token.marketCapSol) } : token;
+      }));
+    });
+    const unsubscribe = subscribeToMarketData(() => { void syncTokensToSupabase(tokens); });
+    return () => { cancelled = true; unsubscribe(); };
+  }, []);
 
   // Sync token spot prices with active AMM pools
   const tokenPricesMap: Record<string, number> = {};
@@ -489,6 +505,15 @@ export const TradingProvider: React.FC<{ children: ReactNode }> = ({ children })
       const newTrades = [newTrade, ...trades];
       setTrades(newTrades);
       saveTrades(newTrades);
+      void recordTradeToSupabase({
+        tokenId: activeToken.id,
+        walletAddress: wallet.publicKey?.toBase58(),
+        type: newTrade.type,
+        solAmount: newTrade.solAmount,
+        tokenAmount: newTrade.tokenAmount,
+        executionPriceSol: newTrade.executionPriceSol,
+        txSignature: newTrade.txSignature,
+      });
 
       // 5. Update Candlestick Chart
       const spotPrice = getSpotPrice(updatedPool.solReserve, updatedPool.tokenReserve);
@@ -575,6 +600,15 @@ export const TradingProvider: React.FC<{ children: ReactNode }> = ({ children })
       const newTrades = [newTrade, ...trades];
       setTrades(newTrades);
       saveTrades(newTrades);
+      void recordTradeToSupabase({
+        tokenId: activeToken.id,
+        walletAddress: wallet.publicKey?.toBase58(),
+        type: newTrade.type,
+        solAmount: newTrade.solAmount,
+        tokenAmount: newTrade.tokenAmount,
+        executionPriceSol: newTrade.executionPriceSol,
+        txSignature: newTrade.txSignature,
+      });
 
       // 5. Update Candlestick Chart
       const spotPrice = getSpotPrice(updatedPool.solReserve, updatedPool.tokenReserve);
