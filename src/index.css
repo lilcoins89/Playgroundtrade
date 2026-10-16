@@ -2,8 +2,17 @@
 @import "tailwindcss";
 
 :root {
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-family: Geist, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color-scheme: dark;
+  background: #08090b;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #08090b;
 }
 
 .font-mono {
@@ -12,10 +21,10 @@
 
 /* Custom Solana wallet adapter theme overrides */
 .wallet-adapter-button {
-  background-color: #14f195 !important;
-  color: #0b0e14 !important;
+  background-color: #a78bfa !important;
+  color: #0b0b0f !important;
   font-weight: 700 !important;
-  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-family: Geist, ui-sans-serif, system-ui, sans-serif !important;
   font-size: 0.875rem !important;
   height: 40px !important;
   padding: 0 16px !important;
@@ -29,7 +38,7 @@
 }
 
 .wallet-adapter-modal-wrapper {
-  background-color: #11151f !important;
+  background-color: #121318 !important;
   border: 1px solid #232b3e !important;
   border-radius: 16px !important;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important;

@@ -110,7 +110,7 @@ export const Header: React.FC<HeaderProps> = ({
           <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse shrink-0" />
           <span className="font-bold">SOLANA DEVNET — TEST FUNDS ONLY</span>
           <span className="hidden sm:inline text-emerald-400/80">
-            | 🟢 Live Solana Stream: Slot #{devnetStatus.slot ? devnetStatus.slot.toLocaleString() : '...'} • Block #{devnetStatus.blockHeight ? devnetStatus.blockHeight.toLocaleString() : '...'} {devnetStatus.pingMs > 0 ? `• ${devnetStatus.pingMs}ms` : ''} • WebSocket Sync Active
+            | Live Solana Stream: Slot #{devnetStatus.slot ? devnetStatus.slot.toLocaleString() : '...'} • Block #{devnetStatus.blockHeight ? devnetStatus.blockHeight.toLocaleString() : '...'} {devnetStatus.pingMs > 0 ? `• ${devnetStatus.pingMs}ms` : ''} • WebSocket Sync Active
           </span>
         </div>
       )}

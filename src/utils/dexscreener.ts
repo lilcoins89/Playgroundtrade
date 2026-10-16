@@ -15,6 +15,18 @@ export interface DexPair {
   info?: { imageUrl?: string; websites?: { url: string }[]; socials?: { type: string; url: string }[] };
 }
 
+export async function fetchLatestSolanaProfiles(): Promise<Array<{ tokenAddress: string; chainId: string; icon?: string; description?: string; url?: string }>> {
+  try {
+    const response = await fetch('https://api.dexscreener.com/token-profiles/latest/v1');
+    if (!response.ok) throw new Error(`DexScreener returned ${response.status}`);
+    const profiles = (await response.json()) as Array<{ tokenAddress: string; chainId: string; icon?: string; description?: string; url?: string }>;
+    return profiles.filter((profile) => profile.chainId === 'solana');
+  } catch (error) {
+    console.warn('[v0] DexScreener profile lookup failed:', error);
+    return [];
+  }
+}
+
 export async function fetchDexScreenerToken(mintAddress: string): Promise<DexPair | null> {
   if (!mintAddress || mintAddress.length < 32) return null;
   try {
