@@ -1,0 +1,61 @@
+@import "@solana/wallet-adapter-react-ui/styles.css";
+@import "tailwindcss";
+
+:root {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color-scheme: dark;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Custom Solana wallet adapter theme overrides */
+.wallet-adapter-button {
+  background-color: #14f195 !important;
+  color: #0b0e14 !important;
+  font-weight: 700 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.875rem !important;
+  height: 40px !important;
+  padding: 0 16px !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+}
+
+.wallet-adapter-button:not([disabled]):hover {
+  background-color: #10d482 !important;
+  transform: translateY(-1px);
+}
+
+.wallet-adapter-modal-wrapper {
+  background-color: #11151f !important;
+  border: 1px solid #232b3e !important;
+  border-radius: 16px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important;
+}
+
+.wallet-adapter-modal-title {
+  color: #f8fafc !important;
+  font-weight: 700 !important;
+}
+
+.wallet-adapter-modal-button-close {
+  background-color: #1b2234 !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0b0e14;
+}
+::-webkit-scrollbar-thumb {
+  background: #232b3e;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #35425f;
+}

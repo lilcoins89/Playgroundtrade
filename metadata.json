@@ -1,0 +1,6 @@
+{
+  "name": "Solana Meme Trading Playground",
+  "description": "Practise meme-token trading on Solana Devnet and virtual AMM simulator with live P&L, real-time charts, Devnet SPL token minting, and wallet adapter.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
