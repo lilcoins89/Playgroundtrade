@@ -13,6 +13,7 @@ import { TokenCreator } from './components/TokenCreator';
 import { TestSuiteModal } from './components/TestSuiteModal';
 import { DevnetGuideModal } from './components/DevnetGuideModal';
 import { AutoAirdropModal } from './components/AutoAirdropModal';
+import { ProgramWorkspace } from './components/ProgramWorkspace';
 import { useTrading } from './context/TradingContext';
 import { Activity, CandlestickChart, Columns } from 'lucide-react';
 
@@ -21,6 +22,7 @@ const MainLayout: React.FC = () => {
   const [isTestsOpen, setIsTestsOpen] = useState(false);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
   const [isAirdropModalOpen, setIsAirdropModalOpen] = useState(false);
+  const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
   const [chartView, setChartView] = useState<'token' | 'portfolio' | 'split'>('token');
 
   const { activeToken, portfolioSummary } = useTrading();
@@ -33,6 +35,7 @@ const MainLayout: React.FC = () => {
         onOpenTests={() => setIsTestsOpen(true)}
         onOpenGuide={() => setIsGuideOpen(true)}
         onOpenAirdrop={() => setIsAirdropModalOpen(true)}
+        onOpenWorkspace={() => setIsWorkspaceOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -155,6 +158,7 @@ const MainLayout: React.FC = () => {
       {isTestsOpen && <TestSuiteModal onClose={() => setIsTestsOpen(false)} />}
       {isGuideOpen && <DevnetGuideModal onClose={() => setIsGuideOpen(false)} />}
       {isAirdropModalOpen && <AutoAirdropModal onClose={() => setIsAirdropModalOpen(false)} />}
+      {isWorkspaceOpen && <ProgramWorkspace onClose={() => setIsWorkspaceOpen(false)} />}
     </div>
   );
 };
