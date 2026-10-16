@@ -29,7 +29,7 @@ const MainLayout: React.FC = () => {
   const { activeToken, portfolioSummary } = useTrading();
 
   return (
-    <div className="min-h-screen bg-[#0b0e14] text-slate-100 flex flex-col font-sans selection:bg-[#9945FF] selection:text-white">
+    <div className="min-h-screen bg-[#08090b] text-slate-100 flex flex-col font-sans selection:bg-[#a78bfa] selection:text-white">
       {/* Sticky Header with safety indicators, mode switcher, and wallet connect */}
       <Header
         onOpenCreator={() => setIsCreatorOpen(true)}
@@ -40,7 +40,34 @@ const MainLayout: React.FC = () => {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6 space-y-4">
+      <main className="flex-1 max-w-[1480px] w-full mx-auto p-3 sm:p-5 lg:p-7 space-y-5">
+        <section className="relative overflow-hidden rounded-[28px] border border-white/[0.08] bg-[radial-gradient(circle_at_82%_0%,rgba(167,139,250,0.18),transparent_34%),linear-gradient(135deg,#121318,#0b0c0f)] p-5 sm:p-7 shadow-2xl shadow-black/20">
+          <div className="pointer-events-none absolute -right-20 -top-20 size-64 rounded-full bg-violet-500/10 blur-3xl" />
+          <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-2xl">
+              <div className="mb-3 flex flex-wrap items-center gap-2 text-[10px] font-mono uppercase tracking-[0.18em] text-slate-500">
+                <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2 py-1 text-emerald-300">Devnet only</span>
+                <span>Surfpool-ready workspace</span>
+                <span className="text-slate-700">/</span>
+                <span>Live market data</span>
+              </div>
+              <h1 className="max-w-xl text-3xl font-semibold tracking-[-0.04em] text-white sm:text-4xl">Trade ideas before they touch mainnet.</h1>
+              <p className="mt-3 max-w-xl text-sm leading-6 text-slate-400">A safe Solana terminal for discovering meme tokens, testing swaps, and tracking performance with real Devnet wallet flows.</p>
+            </div>
+            <div className="grid grid-cols-3 gap-2 sm:min-w-[390px]">
+              {[
+                ['Network', 'Solana Devnet'],
+                ['Data', 'DexScreener'],
+                ['Settlement', 'Wallet signed'],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-2xl border border-white/[0.08] bg-white/[0.035] p-3">
+                  <p className="text-[10px] uppercase tracking-[0.14em] text-slate-500">{label}</p>
+                  <p className="mt-2 text-xs font-medium text-slate-200">{value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
         {/* Top Portfolio Summary & P&L stats */}
         <DashboardStats
           onSelectPortfolioChart={() => setChartView('portfolio')}
