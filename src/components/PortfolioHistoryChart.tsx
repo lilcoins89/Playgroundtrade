@@ -587,7 +587,7 @@ export const PortfolioHistoryChart: React.FC = () => {
         <div className="flex items-center gap-2">
           <span>Starting Capital: {initialPracticeSol.toFixed(1)} SOL</span>
           <span>•</span>
-          <span>Mode: {mode === 'practice' ? 'Simulated Trading' : 'Devnet Cluster'}</span>
+          <span>Mode: {mode === 'practice' ? 'Simulated Trading' : 'On-chain Solana'}</span>
         </div>
         <div className="text-[11px] text-slate-400">
           {chartMode === 'performance' ? (
