@@ -4,6 +4,31 @@ import { useConnection } from '@solana/wallet-adapter-react';
 import { checkRaydiumClmmDevnet, getRaydiumPoolUrl, RAYDIUM_CLMM_DEVNET_PROGRAM_ID, RAYDIUM_CLMM_GITHUB } from '../utils/raydium';
 
 type WorkspaceFile = { name: string; language: string; content: string };
+type ProgramExample = { name: string; category: string; framework: 'Anchor' | 'Native' | 'Pinocchio'; summary: string; files: WorkspaceFile[] };
+
+const PROGRAM_EXAMPLES: ProgramExample[] = [
+  {
+    name: 'Token mint + metadata', category: 'Tokens', framework: 'Anchor',
+    summary: 'Create an SPL token with symbol, decimals, and on-chain metadata.',
+    files: [{ name: 'lib.rs', language: 'Rust', content: `use anchor_lang::prelude::*;\n\ndeclare_id!(\"TokenExample111111111111111111111111111111\");\n\n#[program]\npub mod token_example {\n    use super::*;\n\n    pub fn initialize(ctx: Context<Initialize>, name: String, symbol: String) -> Result<()> {\n        require!(!name.is_empty() && symbol.len() <= 10, TokenError::InvalidMetadata);\n        ctx.accounts.mint_config.name = name;\n        ctx.accounts.mint_config.symbol = symbol;\n        Ok(())\n    }\n}\n\n#[derive(Accounts)]\npub struct Initialize<'info> {\n    #[account(init, payer = authority, space = 8 + MintConfig::INIT_SPACE)]\n    pub mint_config: Account<'info, MintConfig>,\n    #[account(mut)] pub authority: Signer<'info>,\n    pub system_program: Program<'info, System>,\n}\n\n#[account]\n#[derive(InitSpace)]\npub struct MintConfig { #[max_len(64)] pub name: String, #[max_len(10)] pub symbol: String }\n\n#[error_code]\npub enum TokenError { #[msg(\"Invalid token metadata\")] InvalidMetadata }` },
+      { name: 'tests/token.ts', language: 'TypeScript', content: `describe(\"token metadata\", () => {\n  it(\"rejects an empty symbol\", async () => {\n    await expect(client.initialize(\"Meme Token\", \"\")).rejects.toThrow();\n  });\n});` }],
+  },
+  {
+    name: 'Escrow swap', category: 'Tokens', framework: 'Native',
+    summary: 'Trust-minimized two-party asset exchange with account validation.',
+    files: [{ name: 'processor.rs', language: 'Rust', content: `pub fn process_swap(accounts: &[AccountInfo], amount: u64) -> ProgramResult {\n    if amount == 0 { return Err(ProgramError::InvalidArgument); }\n    let [maker, taker, vault, ..] = accounts else { return Err(ProgramError::NotEnoughAccountKeys); };\n    if !maker.is_signer || !taker.is_signer || vault.owner != &id() {\n        return Err(ProgramError::InvalidAccountData);\n    }\n    msg!(\"validated escrow swap for {} units\", amount);\n    Ok(())\n}` }],
+  },
+  {
+    name: 'Constant-product AMM', category: 'DeFi', framework: 'Anchor',
+    summary: 'Liquidity pool math with slippage protection and invariant checks.',
+    files: [{ name: 'lib.rs', language: 'Rust', content: `pub fn swap(amount_in: u128, reserve_in: u128, reserve_out: u128, min_out: u128) -> Result<u128> {\n    require!(amount_in > 0 && reserve_in > 0 && reserve_out > 0, AmmError::InvalidAmount);\n    let amount_out = (amount_in * reserve_out) / (reserve_in + amount_in);\n    require!(amount_out >= min_out, AmmError::SlippageExceeded);\n    Ok(amount_out)\n}` }],
+  },
+  {
+    name: 'Favorites PDA', category: 'Basics', framework: 'Pinocchio',
+    summary: 'Per-user state stored in a PDA controlled by the program.',
+    files: [{ name: 'lib.rs', language: 'Rust', content: `pub fn save_favorite(accounts: &[AccountInfo], label: &[u8]) -> ProgramResult {\n    let [user, favorites, ..] = accounts else { return Err(ProgramError::NotEnoughAccountKeys); };\n    if !user.is_signer || favorites.owner != &id() || label.len() > 32 {\n        return Err(ProgramError::InvalidArgument);\n    }\n    favorites.try_borrow_mut_data()?[..label.len()].copy_from_slice(label);\n    Ok(())\n}` }],
+  },
+];
 
 const FILES: WorkspaceFile[] = [
   {
@@ -26,6 +51,8 @@ export const ProgramWorkspace: React.FC<ProgramWorkspaceProps> = ({ onClose }) =
   const { connection } = useConnection();
   const [raydiumStatus, setRaydiumStatus] = useState<{ ok: boolean; slot: number; latencyMs: number; error?: string } | null>(null);
   const [checkingRaydium, setCheckingRaydium] = useState(false);
+  const [exampleFilter, setExampleFilter] = useState('All');
+  const [activeExample, setActiveExample] = useState(PROGRAM_EXAMPLES[0].name);
   const checkRaydium = async () => {
     setCheckingRaydium(true);
     const result = await checkRaydiumClmmDevnet(connection);
@@ -69,9 +96,13 @@ export const ProgramWorkspace: React.FC<ProgramWorkspaceProps> = ({ onClose }) =
           <aside className="lg:w-56 shrink-0 border-b lg:border-b-0 lg:border-r border-[#202b41] p-3 overflow-auto">
             <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-3"><span>Project files</span><ChevronDown className="size-3" /></div>
             <div className="flex items-center gap-2 text-xs text-slate-300 mb-2"><Folder className="size-3.5 text-amber-300" /> meme-swap</div>
-            <div className="flex flex-col gap-1 pl-3">
-              {FILES.map((file) => <button key={file.name} onClick={() => selectFile(file)} className={`flex items-center gap-2 rounded-md px-2 py-2 text-left text-xs transition-colors ${activeFile === file.name ? 'bg-[#182338] text-white' : 'text-slate-400 hover:bg-[#141d2e] hover:text-slate-200'}`}><FileCode2 className="size-3.5 text-purple-300" />{file.name}</button>)}
+            <div className="mb-3 flex flex-wrap gap-1">
+              {['All', 'Basics', 'Tokens', 'DeFi'].map((category) => <button key={category} onClick={() => setExampleFilter(category)} className={`rounded-md px-2 py-1 text-[9px] font-bold ${exampleFilter === category ? 'bg-[#14F195]/15 text-[#14F195]' : 'text-slate-500 hover:text-slate-200'}`}>{category}</button>)}
             </div>
+            <div className="flex max-h-52 flex-col gap-1 overflow-auto">
+              {PROGRAM_EXAMPLES.filter((example) => exampleFilter === 'All' || example.category === exampleFilter).map((example) => <button key={example.name} onClick={() => { setActiveExample(example.name); selectFile(example.files[0]); }} className={`rounded-lg border px-2.5 py-2 text-left transition-colors ${activeExample === example.name ? 'border-[#14F195]/40 bg-[#14F195]/10' : 'border-transparent hover:bg-[#141d2e]'}`}><div className="flex items-center justify-between gap-2"><span className="text-[11px] font-semibold text-slate-200">{example.name}</span><span className="text-[9px] text-purple-300">{example.framework}</span></div><p className="mt-1 text-[10px] leading-snug text-slate-500">{example.summary}</p></button>)}
+            </div>
+            <div className="mt-3 border-t border-[#202b41] pt-3"><div className="mb-2 text-[10px] uppercase tracking-wider text-slate-500 font-bold">Loaded files</div><div className="flex flex-col gap-1 pl-1">{FILES.map((file) => <button key={file.name} onClick={() => selectFile(file)} className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-xs transition-colors ${activeFile === file.name ? 'bg-[#182338] text-white' : 'text-slate-400 hover:bg-[#141d2e] hover:text-slate-200'}`}><FileCode2 className="size-3.5 text-purple-300" />{file.name}</button>)}</div></div>
             <div className="mt-5 rounded-lg border border-[#273552] bg-[#111827] p-3"><div className="flex items-center gap-2 text-xs font-bold text-slate-200"><Zap className="size-3.5 text-amber-300" />Workspace tips</div><p className="mt-2 text-[11px] leading-relaxed text-slate-500">Write Anchor-compatible Rust, run local checks, then use the wallet signer to deploy on Devnet.</p></div>
             <div className="mt-3 rounded-lg border border-[#3b2b55] bg-[#171222] p-3"><div className="flex items-center justify-between gap-2"><span className="text-xs font-bold text-purple-200">Raydium CLMM</span><button onClick={checkRaydium} disabled={checkingRaydium} className="rounded-md p-1.5 text-purple-300 hover:bg-purple-400/10 disabled:opacity-50" aria-label="Check Raydium CLMM"><RefreshCw className={`size-3.5 ${checkingRaydium ? 'animate-spin' : ''}`} /></button></div><p className="mt-2 text-[10px] leading-relaxed text-slate-500">Devnet program verification uses the Raydium SDK and the CLMM program ID.</p><div className="mt-2 font-mono text-[9px] text-slate-600 break-all">{RAYDIUM_CLMM_DEVNET_PROGRAM_ID}</div><div className="mt-2 flex gap-2"><a href={RAYDIUM_CLMM_GITHUB} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[10px] text-purple-300 hover:text-white">Source <ExternalLink className="size-3" /></a><a href={getRaydiumPoolUrl()} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[10px] text-slate-400 hover:text-white">Pools <ExternalLink className="size-3" /></a></div>{raydiumStatus && <div className={`mt-2 text-[10px] ${raydiumStatus.ok ? 'text-emerald-300' : 'text-rose-300'}`}>{raydiumStatus.ok ? `Verified · slot ${raydiumStatus.slot} · ${raydiumStatus.latencyMs}ms` : raydiumStatus.error}</div>}</div>
           </aside>
