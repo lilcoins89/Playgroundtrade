@@ -72,7 +72,7 @@ export const Header: React.FC<HeaderProps> = ({
       if (res.success && res.signature) {
         setAirdropMsg({
           type: 'success',
-          text: 'Success! 1 Devnet SOL airdropped on-chain.',
+          text: 'Success! 1 Wallet SOL airdropped on-chain.',
           tx: res.signature,
         });
       } else {
@@ -110,7 +110,7 @@ export const Header: React.FC<HeaderProps> = ({
           <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse shrink-0" />
           <span className="font-bold">SOLANA DEVNET — TEST FUNDS ONLY</span>
           <span className="hidden sm:inline text-emerald-400/80">
-            | 🟢 Live Devnet Stream: Slot #{devnetStatus.slot ? devnetStatus.slot.toLocaleString() : '...'} • Block #{devnetStatus.blockHeight ? devnetStatus.blockHeight.toLocaleString() : '...'} {devnetStatus.pingMs > 0 ? `• ${devnetStatus.pingMs}ms` : ''} • WebSocket Sync Active
+            | 🟢 Live Solana Stream: Slot #{devnetStatus.slot ? devnetStatus.slot.toLocaleString() : '...'} • Block #{devnetStatus.blockHeight ? devnetStatus.blockHeight.toLocaleString() : '...'} {devnetStatus.pingMs > 0 ? `• ${devnetStatus.pingMs}ms` : ''} • WebSocket Sync Active
           </span>
         </div>
       )}
@@ -157,7 +157,7 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <Radio className="w-3.5 h-3.5" />
-              Devnet Mode
+              On-chain Mode
             </button>
           </div>
         </div>
@@ -181,10 +181,10 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             </div>
           ) : (
-            /* Devnet Mode Controls */
+            /* On-chain Mode Controls */
             <div className="flex items-center gap-2">
               <div className="hidden md:flex items-center gap-2 bg-[#122320] border border-emerald-500/30 px-3 py-1.5 rounded-lg text-xs font-mono">
-                <span className="text-emerald-400/80">Devnet SOL:</span>
+                <span className="text-emerald-400/80">Wallet SOL:</span>
                 <span className="font-bold text-emerald-300">{devnetSolBalance.toFixed(4)} SOL</span>
               </div>
               <button
@@ -203,7 +203,7 @@ export const Header: React.FC<HeaderProps> = ({
                   onClick={handleAirdrop}
                   disabled={isAirdropping}
                   className="flex items-center gap-1.5 text-xs text-emerald-300 bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-500/40 px-2.5 py-1.5 rounded-lg transition-colors font-medium disabled:opacity-50"
-                  title="Request 1 Devnet SOL from faucet"
+                  title="Request 1 Wallet SOL from faucet"
                 >
                   <Droplet className={`w-3.5 h-3.5 text-emerald-400 ${isAirdropping ? 'animate-bounce' : ''}`} />
                   <span>{isAirdropping ? 'Airdropping...' : '+1 Faucet'}</span>
@@ -270,7 +270,7 @@ export const Header: React.FC<HeaderProps> = ({
                 rel="noreferrer"
                 className="underline inline-flex items-center gap-1 text-emerald-300 hover:text-emerald-100 font-mono ml-2"
               >
-                View on Devnet Explorer <ExternalLink className="w-3 h-3" />
+                View on Solana Explorer <ExternalLink className="w-3 h-3" />
               </a>
             )}
           </div>

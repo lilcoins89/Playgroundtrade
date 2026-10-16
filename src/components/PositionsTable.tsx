@@ -40,7 +40,7 @@ export const PositionsTable: React.FC = () => {
           <p className="text-[11px] text-slate-600 mt-1">
             {mode === 'practice'
               ? 'Execute a practice buy order above to start testing positions and P&L!'
-              : 'Holdings on Devnet appear here when SPL tokens are held.'}
+              : 'On-chain holdings appear here when SPL tokens are held.'}
           </p>
         </div>
       ) : (

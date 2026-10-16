@@ -22,7 +22,7 @@ export const TradeHistory: React.FC = () => {
         <div className="py-8 text-center text-slate-500 font-mono text-xs">
           <p>No trade history recorded yet.</p>
           <p className="text-[11px] text-slate-600 mt-1">
-            Simulated and Devnet trades will be automatically logged here.
+            Simulated and on-chain trades will be automatically logged here.
           </p>
         </div>
       ) : (

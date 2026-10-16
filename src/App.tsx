@@ -14,6 +14,7 @@ import { TestSuiteModal } from './components/TestSuiteModal';
 import { DevnetGuideModal } from './components/DevnetGuideModal';
 import { AutoAirdropModal } from './components/AutoAirdropModal';
 import { ProgramWorkspace } from './components/ProgramWorkspace';
+import { DexScreenerPanel } from './components/DexScreenerPanel';
 import { useTrading } from './context/TradingContext';
 import { Activity, CandlestickChart, Columns } from 'lucide-react';
 
@@ -117,6 +118,7 @@ const MainLayout: React.FC = () => {
           {/* Right Column: Swap Interface & Token Watchlist */}
           <div className="lg:col-span-5 xl:col-span-4 space-y-4">
             <SwapCard />
+            <DexScreenerPanel />
             <TokenWatchlist />
           </div>
         </div>
@@ -125,13 +127,13 @@ const MainLayout: React.FC = () => {
       {/* Footer */}
       <footer className="border-t border-[#182132] py-4 bg-[#0a0d14] text-center text-xs text-slate-500 font-mono">
         <div className="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-between gap-2">
-          <span>Solana Meme Trading Playground • Constant-Product AMM & Devnet SPL Minting</span>
+          <span>Solana Meme Trading Playground • Constant-Product AMM & SPL Minting</span>
           <div className="flex items-center gap-3 text-slate-400">
             <button
               onClick={() => setIsGuideOpen(true)}
               className="hover:text-white transition-colors"
             >
-              Devnet Guide
+              Network Guide
             </button>
             <span>•</span>
             <button
@@ -147,7 +149,7 @@ const MainLayout: React.FC = () => {
               rel="noreferrer"
               className="hover:text-emerald-400 transition-colors"
             >
-              Devnet Explorer
+              Solana Explorer
             </a>
           </div>
         </div>

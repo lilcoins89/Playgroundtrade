@@ -12,7 +12,7 @@ export const supabase =
 export async function recordTradeToSupabase(trade: {
   tokenId: string;
   walletAddress?: string;
-  type: 'buy' | 'sell';
+  type: 'buy' | 'sell' | 'swap';
   solAmount: number;
   tokenAmount: number;
   executionPriceSol: number;
@@ -63,6 +63,22 @@ export async function syncTokensToSupabase(tokens: Array<{
     { onConflict: 'id' },
   );
   if (error) console.warn('[v0] Supabase token sync failed:', error.message);
+}
+
+export async function recordMarketSnapshotToSupabase(snapshot: {
+  tokenId: string;
+  priceSol: number;
+  volumeSol?: number;
+  liquiditySol?: number;
+}) {
+  if (!supabase || !Number.isFinite(snapshot.priceSol) || snapshot.priceSol < 0) return;
+  const { error } = await supabase.from('market_snapshots').insert({
+    token_id: snapshot.tokenId,
+    price_sol: snapshot.priceSol,
+    volume_sol: snapshot.volumeSol ?? 0,
+    liquidity_sol: snapshot.liquiditySol ?? 0,
+  });
+  if (error) console.warn('[v0] Supabase market snapshot persistence failed:', error.message);
 }
 
 export function subscribeToMarketData(onChange: () => void) {

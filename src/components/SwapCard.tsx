@@ -141,7 +141,7 @@ export const SwapCard: React.FC = () => {
         setIsSubmitting(false);
         setFeedback({
           type: 'error',
-          message: 'Please connect your Solana wallet (Phantom or Solflare) to trade on Devnet.',
+          message: 'Please connect your Solana wallet (Phantom or Solflare) to trade on Solana.',
         });
         return;
       }
@@ -199,7 +199,7 @@ export const SwapCard: React.FC = () => {
             <div className="flex items-center gap-1.5">
               <span className="font-bold text-white text-sm">Swap {activeToken.symbol}</span>
               <span className="text-[10px] font-mono text-slate-400 bg-[#161f30] px-1.5 py-0.5 rounded border border-[#232f48]">
-                {mode === 'practice' ? 'Simulated AMM' : 'Devnet Cluster'}
+                {mode === 'practice' ? 'Simulated AMM' : 'On-chain Solana'}
               </span>
             </div>
             {activeToken.mintAddress && (
@@ -542,7 +542,7 @@ export const SwapCard: React.FC = () => {
                 rel="noreferrer"
                 className="mt-1 inline-flex items-center gap-1 underline text-emerald-300 font-mono"
               >
-                View on Devnet Explorer <ExternalLink className="w-3 h-3" />
+                View on Solana Explorer <ExternalLink className="w-3 h-3" />
               </a>
             )}
           </div>
@@ -586,7 +586,7 @@ export const SwapCard: React.FC = () => {
               <div className="flex items-center justify-between">
                 <span className="text-slate-400">Environment:</span>
                 <span className="font-bold text-amber-300">
-                  {mode === 'practice' ? 'Simulated AMM Playground' : 'Solana Devnet Cluster'}
+                  {mode === 'practice' ? 'Simulated AMM Playground' : 'Solana On-chain Solana'}
                 </span>
               </div>
               <div className="flex items-center justify-between">

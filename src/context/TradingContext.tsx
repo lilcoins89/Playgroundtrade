@@ -65,7 +65,7 @@ import {
   toSafePublicKey,
 } from '../utils/solana';
 import { AirdropRecord } from '../types';
-import { recordTradeToSupabase, subscribeToMarketData, syncTokensToSupabase, supabase } from '../utils/supabase';
+import { recordMarketSnapshotToSupabase, recordTradeToSupabase, subscribeToMarketData, syncTokensToSupabase, supabase } from '../utils/supabase';
 
 interface TradingContextType {
   mode: AppMode;
@@ -514,6 +514,12 @@ export const TradingProvider: React.FC<{ children: ReactNode }> = ({ children })
         executionPriceSol: newTrade.executionPriceSol,
         txSignature: newTrade.txSignature,
       });
+      void recordMarketSnapshotToSupabase({
+        tokenId: activeToken.id,
+        priceSol: getSpotPrice(updatedPool.solReserve, updatedPool.tokenReserve),
+        volumeSol: newTrade.solAmount,
+        liquiditySol: updatedPool.solReserve,
+      });
 
       // 5. Update Candlestick Chart
       const spotPrice = getSpotPrice(updatedPool.solReserve, updatedPool.tokenReserve);
@@ -608,6 +614,12 @@ export const TradingProvider: React.FC<{ children: ReactNode }> = ({ children })
         tokenAmount: newTrade.tokenAmount,
         executionPriceSol: newTrade.executionPriceSol,
         txSignature: newTrade.txSignature,
+      });
+      void recordMarketSnapshotToSupabase({
+        tokenId: activeToken.id,
+        priceSol: getSpotPrice(updatedPool.solReserve, updatedPool.tokenReserve),
+        volumeSol: newTrade.solAmount,
+        liquiditySol: updatedPool.solReserve,
       });
 
       // 5. Update Candlestick Chart
