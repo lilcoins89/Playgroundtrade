@@ -1,5 +1,7 @@
 import React, { useMemo, useState } from 'react';
-import { Braces, CheckCircle2, ChevronDown, Code2, FileCode2, Folder, Play, Rocket, Terminal, X, Zap } from 'lucide-react';
+import { Braces, CheckCircle2, ChevronDown, Code2, FileCode2, Folder, Play, Rocket, Terminal, X, Zap, ExternalLink, RefreshCw } from 'lucide-react';
+import { useConnection } from '@solana/wallet-adapter-react';
+import { checkRaydiumClmmDevnet, getRaydiumPoolUrl, RAYDIUM_CLMM_DEVNET_PROGRAM_ID, RAYDIUM_CLMM_GITHUB } from '../utils/raydium';
 
 type WorkspaceFile = { name: string; language: string; content: string };
 
@@ -21,6 +23,16 @@ export const ProgramWorkspace: React.FC<ProgramWorkspaceProps> = ({ onClose }) =
   const [activeTab, setActiveTab] = useState<'editor' | 'tests' | 'logs'>('editor');
   const [status, setStatus] = useState<'idle' | 'running' | 'success' | 'error'>('idle');
   const [logs, setLogs] = useState<string[]>(['Workspace connected to Solana Devnet.', 'No program deployed in this session.']);
+  const { connection } = useConnection();
+  const [raydiumStatus, setRaydiumStatus] = useState<{ ok: boolean; slot: number; latencyMs: number; error?: string } | null>(null);
+  const [checkingRaydium, setCheckingRaydium] = useState(false);
+  const checkRaydium = async () => {
+    setCheckingRaydium(true);
+    const result = await checkRaydiumClmmDevnet(connection);
+    setRaydiumStatus(result);
+    setLogs((current) => [...current, result.ok ? `Raydium CLMM verified at slot ${result.slot} (${result.latencyMs}ms).` : `Raydium CLMM check failed: ${result.error}`]);
+    setCheckingRaydium(false);
+  };
 
   const selectedFile = useMemo(() => FILES.find((file) => file.name === activeFile) ?? FILES[0], [activeFile]);
   const runChecks = () => {
@@ -61,6 +73,7 @@ export const ProgramWorkspace: React.FC<ProgramWorkspaceProps> = ({ onClose }) =
               {FILES.map((file) => <button key={file.name} onClick={() => selectFile(file)} className={`flex items-center gap-2 rounded-md px-2 py-2 text-left text-xs transition-colors ${activeFile === file.name ? 'bg-[#182338] text-white' : 'text-slate-400 hover:bg-[#141d2e] hover:text-slate-200'}`}><FileCode2 className="size-3.5 text-purple-300" />{file.name}</button>)}
             </div>
             <div className="mt-5 rounded-lg border border-[#273552] bg-[#111827] p-3"><div className="flex items-center gap-2 text-xs font-bold text-slate-200"><Zap className="size-3.5 text-amber-300" />Workspace tips</div><p className="mt-2 text-[11px] leading-relaxed text-slate-500">Write Anchor-compatible Rust, run local checks, then use the wallet signer to deploy on Devnet.</p></div>
+            <div className="mt-3 rounded-lg border border-[#3b2b55] bg-[#171222] p-3"><div className="flex items-center justify-between gap-2"><span className="text-xs font-bold text-purple-200">Raydium CLMM</span><button onClick={checkRaydium} disabled={checkingRaydium} className="rounded-md p-1.5 text-purple-300 hover:bg-purple-400/10 disabled:opacity-50" aria-label="Check Raydium CLMM"><RefreshCw className={`size-3.5 ${checkingRaydium ? 'animate-spin' : ''}`} /></button></div><p className="mt-2 text-[10px] leading-relaxed text-slate-500">Devnet program verification uses the Raydium SDK and the CLMM program ID.</p><div className="mt-2 font-mono text-[9px] text-slate-600 break-all">{RAYDIUM_CLMM_DEVNET_PROGRAM_ID}</div><div className="mt-2 flex gap-2"><a href={RAYDIUM_CLMM_GITHUB} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[10px] text-purple-300 hover:text-white">Source <ExternalLink className="size-3" /></a><a href={getRaydiumPoolUrl()} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[10px] text-slate-400 hover:text-white">Pools <ExternalLink className="size-3" /></a></div>{raydiumStatus && <div className={`mt-2 text-[10px] ${raydiumStatus.ok ? 'text-emerald-300' : 'text-rose-300'}`}>{raydiumStatus.ok ? `Verified · slot ${raydiumStatus.slot} · ${raydiumStatus.latencyMs}ms` : raydiumStatus.error}</div>}</div>
           </aside>
 
           <main className="flex-1 min-w-0 min-h-0 flex flex-col">
