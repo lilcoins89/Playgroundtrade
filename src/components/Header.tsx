@@ -25,6 +25,7 @@ interface HeaderProps {
   onOpenTests: () => void;
   onOpenGuide: () => void;
   onOpenAirdrop: () => void;
+  onOpenWorkspace: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -32,6 +33,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenTests,
   onOpenGuide,
   onOpenAirdrop,
+  onOpenWorkspace,
 }) => {
   const {
     mode,
@@ -209,6 +211,16 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </div>
           )}
+
+          {/* Solana Playground-inspired browser workspace */}
+          <button
+            onClick={onOpenWorkspace}
+            className="flex items-center gap-1.5 text-xs text-purple-200 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-400/30 px-3 py-1.5 rounded-lg transition-all font-semibold"
+            title="Open the browser-based Solana program workspace"
+          >
+            <Flame className="w-3.5 h-3.5 text-purple-300" />
+            <span className="hidden sm:inline">Program Lab</span>
+          </button>
 
           {/* Token Creator Trigger */}
           <button
