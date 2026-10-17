@@ -45,14 +45,18 @@ const MainLayout: React.FC = () => {
           <div className="pointer-events-none absolute -right-20 -top-20 size-64 rounded-full bg-violet-500/10 blur-3xl" />
           <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
-              <div className="mb-3 flex flex-wrap items-center gap-2 text-[10px] font-mono uppercase tracking-[0.18em] text-slate-500">
-                <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2 py-1 text-emerald-300">Devnet only</span>
+              <div className="mb-4 flex flex-wrap items-center gap-2 text-[10px] font-mono uppercase tracking-[0.18em] text-slate-500">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-2.5 py-1 text-emerald-300"><span className="size-1.5 rounded-full bg-emerald-300 shadow-[0_0_10px_rgba(110,231,183,0.9)]" />Devnet only</span>
                 <span>Surfpool-ready workspace</span>
                 <span className="text-slate-700">/</span>
                 <span>Live market data</span>
               </div>
-              <h1 className="max-w-xl text-3xl font-semibold tracking-[-0.04em] text-white sm:text-4xl">Trade ideas before they touch mainnet.</h1>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-slate-400">A safe Solana terminal for discovering meme tokens, testing swaps, and tracking performance with real Devnet wallet flows.</p>
+              <h1 className="max-w-2xl text-3xl font-semibold leading-[1.05] tracking-[-0.05em] text-white sm:text-5xl">Trade ideas before they touch <span className="text-violet-300">mainnet.</span></h1>
+              <p className="mt-4 max-w-xl text-sm leading-6 text-slate-400">A controlled Solana terminal for discovering meme tokens, testing swaps, and tracking performance with real Devnet wallet flows.</p>
+              <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] font-mono text-slate-500">
+                <span className="flex items-center gap-2"><span className="size-1.5 rounded-full bg-emerald-400" />Wallet signing enabled</span>
+                <span className="flex items-center gap-2"><span className="size-1.5 rounded-full bg-violet-400" />Paper P&L synced</span>
+              </div>
             </div>
             <div className="grid grid-cols-3 gap-2 sm:min-w-[390px]">
               {[
